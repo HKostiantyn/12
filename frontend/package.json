@@ -1,0 +1,29 @@
+{
+  "name": "frontend",
+  "version": "1.0.0",
+  "main": "index.js",
+  "license": "MIT",
+  "private": true,
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
+  "dependencies": {
+    "@react-oauth/google": "^0.12.1",
+    "@reduxjs/toolkit": "^2.4.0",
+    "@types/react-dom": "^18.3.2",
+    "@vitejs/plugin-react": "^4.3.4",
+    "daisyui": "^4.12.14",
+    "google-auth-library": "^9.15.0",
+    "jwt-decode": "^4.0.0",
+    "rc-resize-observer": "^1.4.0",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "react-redux": "^9.1.2",
+    "resize-observer-polyfill": "^1.5.1"
+  },
+  "devDependencies": {
+    "@types/react": "^18.3.14",
+    "@types/react-redux": "^7.1.34"
+  }
+}

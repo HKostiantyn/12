@@ -1,0 +1,11 @@
+{
+  "compilerOptions": {
+    "baseUrl": ".",
+    "paths": {
+      "@shared/*": ["packages/shared/src/*"]
+    },
+    "jsx": "react-native",
+    "noUnusedLocals": false,
+    "noUnusedParameters": false
+  }
+}
