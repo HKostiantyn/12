@@ -44,6 +44,8 @@ const MembershipPlans = ({ subscriptionPlans }: MembershipPlansProps) => {
     try {
       const token = localStorage.getItem("token");
 
+
+
       if (!token) {
         throw new Error("User is not authenticated.");
       }
