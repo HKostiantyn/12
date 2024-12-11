@@ -1,3 +1,5 @@
+import React from 'react';
+
 const WarrantScreener = () => {
   return (
     <div className="p-8 bg-blue-100 rounded-lg">
@@ -144,7 +146,7 @@ const WarrantScreener = () => {
         </div>
         <button
           type="button"
-          className="w-32 self-end rounded-md bg-primary p-2"
+          className="bg-blue-500 text-white my-[1rem] px-4 py-2 rounded cursor-pointer w-full"
         >
           Submit
         </button>

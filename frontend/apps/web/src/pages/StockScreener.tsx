@@ -1,4 +1,4 @@
-import { useState } from "react";
+import React,{ useState } from "react";
 import Tooltip from "rc-tooltip";
 import Slider from "rc-slider";
 import Handle from "rc-slider/lib/Handles/Handle";
@@ -666,7 +666,7 @@ const StockScreener = () => {
           </button>
           <button
             type="submit"
-            className="bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-400"
+            className="bg-blue-500 text-white px-4 py-2 mt-5 rounded cursor-pointer w-full"
           >
             Screen
           </button>

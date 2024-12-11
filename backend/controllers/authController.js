@@ -33,3 +33,19 @@ exports.loginUser = async (req, res) => {
     res.status(500).json({ error: err.message });
   }
 };
+
+
+exports.getUserData = async (req, res) => {
+  const { userId } = req.params;
+
+  try {
+    const user = await User.findById(userId);
+    if (!user) {
+      return res.status(404).send({ message: 'User not found' });
+    }
+    res.status(200).send(user);
+  } catch (error) {
+    console.error('Error fetching user data:', error);
+    res.status(500).send({ message: 'Error fetching user data' });
+  }
+};

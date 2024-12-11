@@ -8,6 +8,24 @@ const userSchema = new mongoose.Schema({
   stripeCustomerId: { type: String }, // Add this field
   stripeSessionId: { type: String },
   stripeSessionTestId: { type: String },
+  // verified: {
+  //   type: Boolean,
+  //   default: false,
+  // },
+  // role: {
+  //   type: String,
+  //   required: false,
+  //   default: "Administrator"
+  // },
+  // logo: {
+  //   type: String,
+  //   default: ""
+  // },
+  level: {
+    type: String,
+    default: 'STARTER',
+  },
+
 });
 
 // Hash the password before saving

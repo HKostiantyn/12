@@ -17,22 +17,6 @@ interface IDahsboardProps {
 }
 
 const Dashboard: React.FC<IDahsboardProps> = ({ news, marketDayWatch }) => {
-  const scrollNewsRef = useRef<HTMLDivElement | null>(null);
-
-  const handleScroll = (event: WheelEvent) => {
-    event.preventDefault();
-    if (scrollNewsRef.current) {
-      scrollNewsRef.current.scrollLeft += event.deltaY;
-    }
-  };
-
-  const addScrollListener = () => {
-    scrollNewsRef.current?.addEventListener("wheel", handleScroll);
-  };
-
-  const removeScrollListener = () => {
-    scrollNewsRef.current?.removeEventListener("wheel", handleScroll);
-  };
 
   return (
     <div className="mx-auto max-w-screen flex flex-col gap-2">

@@ -1,21 +1,21 @@
 import React, { useState } from "react";
-
 import { Link, useNavigate } from "react-router-dom"; // useNavigate is used in v6
 import { GoogleLogin } from "@react-oauth/google";
-import { useAuth } from "../context/AuthContext"; // Import useAuth to access context
+import { useDispatch } from 'react-redux';
+import { setUserDetails } from '../store/authSlice';
 
 const Login: React.FC = () => {
+  const dispatch = useDispatch();
   const [email, setEmail] = useState<string>("");
   const [password, setPassword] = useState<string>("");
   const [error, setError] = useState<string | null>(null); // To show error messages
   const navigate = useNavigate(); // useNavigate for redirecting in v6
-  const { setIsLoggedIn } = useAuth();
 
   const handleGoogleLogin = async (credentialResponse: any) => {
     const token = credentialResponse.credential;
 
     // Send the token to the backend
-    const response = await fetch("http://localhost:5000/api/auth/google-login", {
+    const response = await fetch(`${process.env.REACT_APP_BACKEND_URL}/api/auth/google-login`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -26,12 +26,22 @@ const Login: React.FC = () => {
     const data = await response.json();
     if (response.ok) {
 
-      // Save the token in localStorage or sessionStorage
-      localStorage.setItem("token", data.token);
-      localStorage.setItem("userId", data.userId);
-      setIsLoggedIn(true);
-
-      // Redirect user to dashboard or home page after successful login
+       // Save token and userId if they exist
+       if (data.token) {
+        localStorage.setItem("token", data.token);
+      } else {
+        console.error("Token is missing from the response.");
+      }
+  
+      if (data.userId) {
+        localStorage.setItem("userId", data.userId);
+      } else {
+        console.error("userId is missing from the response.");
+      }
+  
+      // Dispatch user details
+      dispatch(setUserDetails(data.userId || ""));
+      
       navigate("/"); // Redirect using navigate
     } else {
       console.error("Google login failed", data.error);
@@ -40,11 +50,10 @@ const Login: React.FC = () => {
 
   // Function to handle form submission
   const submitHandler = async (e: React.FormEvent) => {
-    e.preventDefault(); // Prevent the default form submission
-
-    // Make an API call to login the user
+    e.preventDefault();
+  
     try {
-      const response = await fetch("http://localhost:5000/api/auth/login", {
+      const response = await fetch(`${process.env.REACT_APP_BACKEND_URL}/api/auth/login`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -54,48 +63,63 @@ const Login: React.FC = () => {
           password,
         }),
       });
-
+  
       const data = await response.json();
-
+      console.log("Full response data:", data);
+  
       if (!response.ok) {
-        // If response is not ok, show error message
         setError(data.message || "Something went wrong!");
         return;
       }
-
-      // Save the token in localStorage or sessionStorage
-      localStorage.setItem("token", data.token);
-      localStorage.setItem("userId", data.userId);
-      setIsLoggedIn(true);
-
-      // Redirect user to dashboard or home page after successful login
-      navigate("/"); // Redirect using navigate
+  
+      // Save token and userId if they exist
+      if (data.token) {
+        localStorage.setItem("token", data.token);
+      } else {
+        console.error("Token is missing from the response.");
+      }
+  
+      if (data.userId) {
+        localStorage.setItem("userId", data.userId);
+      } else {
+        console.error("userId is missing from the response.");
+      }
+  
+      // Dispatch user details
+      dispatch(setUserDetails(data.userId || ""));
+  
+      navigate("/");
     } catch (error) {
       setError("An error occurred. Please try again.");
-      console.log(error)
+      console.error("Error during login:", error);
     }
   };
+  
+  
 
   return (
-    <div>
-      <section className="pl-[10rem] flex flex-wrap">
-        <div className="mr-[4rem] mt-[5rem]">
-          <h1 className="text-2xl font-semibold mb-4">Sign In</h1>
+    <div className=" flex items-center justify-center h-[90%] bg-gray-100">
+      <section className="flex flex-col md:flex-row items-center justify-center gap-8 max-w-8xl w-full p-4">
+        {/* Left Content */}
+        <div className="w-full max-w-2xl">
+          <h1 className="text-2xl font-semibold mb-4 text-center md:text-left">
+            Sign In
+          </h1>
 
           {error && <p className="text-red-500">{error}</p>} {/* Show error message */}
 
-          <form onSubmit={submitHandler} className="container w-[40rem]">
-            <div className="my-[2rem]">
+          <form onSubmit={submitHandler} className="w-full">
+            <div className="my-4">
               <label
                 htmlFor="email"
-                className="block text-sm font-medium text-black"
+                className="block text-lg font-medium text-black"
               >
                 Email Address
               </label>
               <input
                 type="email"
                 id="email"
-                className="mt-1 p-2 border border-solid border-2 border-gray-500 outline-1 outline-indigo-600 rounded w-full"
+                className="mt-1 p-2 border border-solid border-gray-500 outline-indigo-600 rounded w-full"
                 placeholder="Enter email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
@@ -105,14 +129,14 @@ const Login: React.FC = () => {
             <div className="mb-4">
               <label
                 htmlFor="password"
-                className="block text-sm font-medium text-black"
+                className="block text-lg font-medium text-black"
               >
                 Password
               </label>
               <input
                 type="password"
                 id="password"
-                className="mt-1 p-2 border border-solid border-2 border-gray-500 outline-1 outline-indigo-600 rounded w-full"
+                className="mt-1 p-2 border border-solid border-gray-500 outline-indigo-600 rounded w-full"
                 placeholder="Enter password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
@@ -121,14 +145,14 @@ const Login: React.FC = () => {
 
             <button
               type="submit"
-              className="bg-blue-500  text-white px-4 py-2 rounded cursor-pointer my-[1rem]"
+              className="bg-blue-500 text-white px-4 py-2 mt-5 rounded cursor-pointer w-full"
             >
               Login
             </button>
           </form>
 
-          <div className="mt-4">
-            <p className="text-black">
+          <div className="mt-4 text-center">
+            <p className="text-black text-lg">
               New Customer?{" "}
               <Link
                 to="/signup"
@@ -138,15 +162,30 @@ const Login: React.FC = () => {
               </Link>
             </p>
           </div>
-          <GoogleLogin
-            onSuccess={handleGoogleLogin}
-            onError={() => {
-              console.error("Login Failed");
-            }}
+          <div className="mt-4 w-full flex justify-center">
+            <GoogleLogin
+              onSuccess={handleGoogleLogin}
+              onError={() => {
+                console.error("Login Failed");
+              }}
+              theme="outline" 
+              size="large"
+              width= "400"
+            />
+          </div>
+        </div>
+
+        {/* Right Image */}
+        <div className="w-full max-w-2xl">
+          <img
+            src="/hongkongflag.png"
+            alt="Hong Kong Flag"
+            className="w-full h-auto transform transition-all duration-300 ease-in-out blur-sm hover:blur-none focus:blur-none"
           />
         </div>
       </section>
     </div>
+
   );
 };
 

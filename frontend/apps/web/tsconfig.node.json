@@ -21,6 +21,7 @@
     "paths": {
       "vite": ["./node_modules/vite"]
     },
+    
   },
   "include": ["vite.config.ts"]
 }

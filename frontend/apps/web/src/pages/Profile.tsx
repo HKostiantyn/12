@@ -5,7 +5,7 @@ import { useNavigate, useLocation } from "react-router-dom";
 import ImageUpload from "../components/ImageUpload";
 import MembershipPlans from "./MembershipPlans";
 import AccountInfo from "./AccountInfo";
-import userMenuIcon from "/user-menu-icon.png";
+// import userMenuIcon from "/user-menu-icon.png";
 
 interface AccountProps {}
 
@@ -20,29 +20,29 @@ const Profile: React.FC<AccountProps> = () => {
 
   const plans = [
     {
-      name: "Free",
+      name: "STARTER",
       description: "Great for trying our APIs",
-      price: "0 USDT",
+      price: "Free",
       features: [
         "10 Products",
         "10 API calls per minute (6 seconds each)",
-        "1 Websocket",
+        
         "1 Year Historical K-line",
-        "Last Price",
+       
         "End of Day Data",
       ],
     },
     {
-      name: "Basic",
+      name: "BASIC",
       description: "Great for WebSocket",
-      price: "99 USDT",
+      price: "10 USDT/monthly",
       features: [
         "100 products available",
         "Supports Forex, Commodities, Stocks, Cryptocurrencies",
         "60 API calls per minute (1 second each)",
-        "1 Websocket",
+        
         "1 Year Historical K-line",
-        "Last Price",
+        
         "End of Day Data",
         "Real-time K-line",
         "Order Book",
@@ -50,16 +50,16 @@ const Profile: React.FC<AccountProps> = () => {
       ],
     },
     {
-      name: "Premium",
+      name: "PREMIUM",
       description: "Great for Trades",
-      price: "199 USDT",
+      price: "20 USDT/monthly",
       features: [
         "200 products available",
         "Supports Forex, Commodities, Stocks, Cryptocurrencies",
         "600 API calls per minute (10 calls per second)",
-        "3 Websockets",
+        
         "3 Years Historical K-line",
-        "Last Price",
+        
         "End of Day Data",
         "Real-time K-line",
         "Order Book",
@@ -67,16 +67,16 @@ const Profile: React.FC<AccountProps> = () => {
       ],
     },
     {
-      name: "Professional",
+      name: "PROFESSIONAL",
       description: "Perfect for exchanges",
-      price: "399 USDT",
+      price: "30 USDT/monthly",
       features: [
         "3000 products available",
         "Supports Forex, Commodities, Stocks, Cryptocurrencies",
         "1200 API calls per minute (20 calls per second)",
-        "10 Websockets",
+        
         "5 Years Historical K-line",
-        "Last Price",
+        
         "End of Day Data",
         "Real-time K-line",
         "Order Book",
@@ -106,7 +106,7 @@ const Profile: React.FC<AccountProps> = () => {
       const formData = new FormData();
       formData.append("file", file);
 
-      const response = await fetch("http://localhost:5000/api/users/upload_logo", {
+      const response = await fetch(`${process.env.REACT_APP_BACKEND_URL}/api/users/upload_logo", {
         method: "POST",
         body: formData,
       });
@@ -160,7 +160,7 @@ const Profile: React.FC<AccountProps> = () => {
         {/* Left Sidebar */}
         <div className="bg-gray-100 w-full md:w-1/4 p-6">
           <div className="text-center mb-8">
-            <img src={userMenuIcon} alt="User Menu" className="w-20 mx-auto" />
+            <img src="/user-menu-icon.png" alt="User Menu" className="w-20 mx-auto" />
           </div>
           <h2 className="text-xl font-semibold mb-6 text-center">Manage Account</h2>
           <nav>

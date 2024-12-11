@@ -1,14 +1,15 @@
 import React, { useState, useEffect } from "react";
 import { useSelector } from 'react-redux';
-import { RootState } from '../store';
 import { useNavigate } from "react-router-dom";
+import { RootState } from "../store";
 
 const Success = () => {
   const [toastOpen, setToastOpen] = useState(false);
   const [notificationText, setNotificationText] = useState('');
   const [success, setSuccess] = useState(false);
   const navigate = useNavigate();
-
+  const sessionId = useSelector((state: RootState) => state.subscription.sessionId);
+  const userId = useSelector((state: RootState) => state.auth.userId);
 
   useEffect(() => {
     document.body.classList.add("login-page");
@@ -23,21 +24,18 @@ const Success = () => {
     };
   }, []);
 
-
-  const sessionId = useSelector((state: RootState) => state.subscription.sessionId);
-
   const onSubmit = async (e: React.FormEvent) => {
     e.preventDefault();   
 
     try {
-      const token = localStorage.getItem("token");
+      // console.log("-------->", userId, sessionId)
       const response = await fetch('http://localhost:5000/api/subscribe/payment-success', {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          Authorization: `Bearer ${token}`,
+          userId: userId,
           sessionId: sessionId, // Replace with actual session ID
           modeType: false, // Replace with actual mode type
         }),
@@ -45,7 +43,6 @@ const Success = () => {
 
       const data = await response.json();
 
-      console.log("data---", data)
       if (response.ok) {
         // Assuming updateUser functionality can be directly applied here
         navigate('/profile');
