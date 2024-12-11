@@ -15,7 +15,7 @@ const Login: React.FC = () => {
     const token = credentialResponse.credential;
 
     // Send the token to the backend
-    const response = await fetch(`${process.env.REACT_APP_BACKEND_URL}/api/auth/google-login`, {
+    const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/api/auth/google-login`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -53,7 +53,7 @@ const Login: React.FC = () => {
     e.preventDefault();
   
     try {
-      const response = await fetch(`${process.env.REACT_APP_BACKEND_URL}/api/auth/login`, {
+      const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/api/auth/login`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

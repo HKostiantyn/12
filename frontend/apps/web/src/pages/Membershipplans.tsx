@@ -49,7 +49,7 @@ const MembershipPlans = ({ subscriptionPlans }: MembershipPlansProps) => {
   useEffect(() => {
     const fetchUserLevel = async () => {
       try {
-        const response = await fetch(`${process.env.REACT_APP_BACKEND_URL}/api/auth/${userId}`);
+        const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/api/auth/${userId}`);
         if (!response.ok) {
           throw new Error('Failed to fetch user data');
         }
@@ -77,7 +77,7 @@ const MembershipPlans = ({ subscriptionPlans }: MembershipPlansProps) => {
   const subscribeToPlan = async (plan: string, isDowngrade: boolean) => {
     try {
 
-      const response = await fetch(`${process.env.REACT_APP_BACKEND_URL}/api/subscribe/create-customer`, {
+      const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/api/subscribe/create-customer`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -102,7 +102,7 @@ const MembershipPlans = ({ subscriptionPlans }: MembershipPlansProps) => {
   const createSubscription = async (plan: string, isDowngrade: boolean, dispatch: any) => {
     try {
 
-      const response = await fetch(`${process.env.REACT_APP_BACKEND_URL}/api/subscribe/create-subscription-checkout-session`, {
+      const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/api/subscribe/create-subscription-checkout-session`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -128,7 +128,7 @@ const MembershipPlans = ({ subscriptionPlans }: MembershipPlansProps) => {
 
     try {
       
-      const response = await fetch(`${process.env.REACT_APP_BACKEND_URL}/api/subscribe/cancelSubscription`, {
+      const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/api/subscribe/cancelSubscription`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

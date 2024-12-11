@@ -106,7 +106,7 @@ const Profile: React.FC<AccountProps> = () => {
       const formData = new FormData();
       formData.append("file", file);
 
-      const response = await fetch(`${process.env.REACT_APP_BACKEND_URL}/api/users/upload_logo`, {
+      const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/api/users/upload_logo`, {
         method: "POST",
         body: formData,
       });
