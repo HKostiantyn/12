@@ -3,7 +3,7 @@ import { useNavigate, useLocation } from "react-router-dom";
 
 // Core Components
 import ImageUpload from "../components/ImageUpload";
-import MembershipPlans from "./MembershipPlans";
+import MembershipPlans from "./Membershipplans";
 import AccountInfo from "./AccountInfo";
 // import userMenuIcon from "/user-menu-icon.png";
 
