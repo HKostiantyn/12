@@ -5,6 +5,7 @@
     // "module": "ESNext",
     "skipLibCheck": true,
     "jsx": "react-jsx", 
+    "types": ["node", "react", "react-dom"],
     "moduleResolution": "node",
     "allowSyntheticDefaultImports": true,
     "esModuleInterop": true,  // <-- Fixed by adding a comma here
