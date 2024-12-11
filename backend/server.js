@@ -14,7 +14,7 @@ app.use(express.json());
 app.use(bodyParser.json());
 app.use(
     cors({
-        origin: "http://localhost:5173", // Replace with your frontend URL
+        origin: ["https://hkexscreener.com", "http://localhost:5173"], // Replace with your frontend URL
         credentials: true,
     })
 );
