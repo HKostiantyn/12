@@ -54,13 +54,15 @@ const MembershipPlans = ({ subscriptionPlans }: MembershipPlansProps) => {
           throw new Error('Failed to fetch user data');
         }
         const userData = await response.json();
+      
         dispatch(setUserDetails({
-          userId: userData._id,
-          username: userData.username,
-          email: userData.email,
-          level: userData.level,
-          stripeSessionId: userData.stripeSessionId,
-          token: userData.token,
+          userId: userData._id || null,
+          admin: userData.admin || false,
+          username: userData.username || null,
+          email: userData.email || null,
+          level: userData.level || null,
+          stripeSessionId: userData.stripeSessionId || null,
+          token: userData.token || null,
         }));
         console.log(userData)
       } catch (error) {

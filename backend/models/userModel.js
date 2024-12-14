@@ -12,11 +12,11 @@ const userSchema = new mongoose.Schema({
   //   type: Boolean,
   //   default: false,
   // },
-  // role: {
-  //   type: String,
-  //   required: false,
-  //   default: "Administrator"
-  // },
+  isAdmin: {
+    type: Boolean,
+    required: true,
+    default: false,
+  },
   // logo: {
   //   type: String,
   //   default: ""

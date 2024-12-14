@@ -4,7 +4,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { clearUserDetails } from "../store/authSlice";
 import { RootState } from "../store";
 import { FaFilter } from "react-icons/fa6";
-import { FaGlobe, FaRegNewspaper, FaChevronDown, FaChevronUp, FaMoneyBillAlt } from "react-icons/fa";
+import { FaGlobe, FaRegNewspaper, FaChevronDown, FaChevronUp, FaMoneyBillAlt, FaSearch } from "react-icons/fa";
 import { RiDiscussFill } from "react-icons/ri";
 import { AiFillEuroCircle } from "react-icons/ai";
 import { IoMenu } from "react-icons/io5";
@@ -12,9 +12,9 @@ import { BsThreeDots } from "react-icons/bs";
 
 const Header: React.FC = () => {
   const dispatch = useDispatch();
-  // const userId = useSelector((state: RootState) => state.auth.userId);
-  const userId = localStorage.getItem("userId")
-  // console.log("asdf", localStorage.getItem("userId"))
+  const userId = useSelector((state: RootState) => state.auth.userId);
+  // const userId = localStorage.getItem("userId")
+  console.log("asdf----", userId)
 
   const [isOpen, setIsOpen] = useState(false);
   const [activeMenu, setActiveMenu] = useState<string | null>(null);
@@ -36,7 +36,7 @@ const Header: React.FC = () => {
   const handleLogout = () => {
     try {
       dispatch(clearUserDetails());
-      localStorage.clear();
+      // localStorage.clear();
       navigate("/login");
     } catch (err) {
       console.error("Logout failed:", err);
@@ -145,20 +145,7 @@ const Header: React.FC = () => {
               className="align-middle select-none font-sans font-bold text-center uppercase transition-all disabled:opacity-50 disabled:shadow-none disabled:pointer-events-none text-xs py-2 px-4 bg-gray-900 text-white shadow-md shadow-gray-900/10 hover:shadow-lg hover:shadow-gray-900/20 focus:opacity-[0.85] focus:shadow-none active:opacity-[0.85] active:shadow-none !absolute right-1 top-1 rounded"
               type="button"
             >
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                viewBox="0 0 24 24"
-                fill="currentColor"
-                aria-hidden="true"
-                data-slot="icon"
-                className="block h-4"
-              >
-                <path
-                  fill-rule="evenodd"
-                  d="M10.5 3.75a6.75 6.75 0 1 0 0 13.5 6.75 6.75 0 0 0 0-13.5ZM2.25 10.5a8.25 8.25 0 1 1 14.59 5.28l4.69 4.69a.75.75 0 1 1-1.06 1.06l-4.69-4.69A8.25 8.25 0 0 1 2.25 10.5Z"
-                  clip-rule="evenodd"
-                ></path>
-              </svg>
+              <FaSearch />
             </button>
           </div>
 
@@ -194,7 +181,7 @@ const Header: React.FC = () => {
                           <li className="w-40" key={subIndex}>
                             <Link
                               to={submenuItem.to}
-                              className="block px-2 py-1 h-10 hover:bg-blue-100 rounded"
+                              className="flex block px-2 py-1 h-10 hover:bg-blue-100 rounded"
                             >
                               {submenuItem.title}
                             </Link>

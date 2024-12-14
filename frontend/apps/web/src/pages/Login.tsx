@@ -1,8 +1,9 @@
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom"; // useNavigate is used in v6
 import { GoogleLogin } from "@react-oauth/google";
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { setUserDetails } from '../store/authSlice';
+import { RootState } from "../store";
 
 const Login: React.FC = () => {
   const dispatch = useDispatch();
@@ -26,22 +27,30 @@ const Login: React.FC = () => {
     const data = await response.json();
     if (response.ok) {
 
-       // Save token and userId if they exist
-       if (data.token) {
-        localStorage.setItem("token", data.token);
-      } else {
-        console.error("Token is missing from the response.");
-      }
-  
-      if (data.userId) {
-        localStorage.setItem("userId", data.userId);
-      } else {
-        console.error("userId is missing from the response.");
-      }
-  
-      // Dispatch user details
-      dispatch(setUserDetails(data.userId || ""));
-      
+      // Save token and userId if they exist
+      //  if (data.token) {
+      //   localStorage.setItem("token", data.token);
+      // } else {
+      //   console.error("Token is missing from the response.");
+      // }
+
+      // if (data.userId) {
+      //   localStorage.setItem("userId", data.userId);
+      // } else {
+      //   console.error("userId is missing from the response.");
+      // }
+
+      dispatch(setUserDetails({
+        userId: data.userId || null,
+        admin: data.admin || false,
+        username: null, // Default for optional fields
+        email: null,
+        level: null,
+        stripeSessionId: null,
+        token: null,
+      }));
+   
+
       navigate("/"); // Redirect using navigate
     } else {
       console.error("Google login failed", data.error);
@@ -51,7 +60,7 @@ const Login: React.FC = () => {
   // Function to handle form submission
   const submitHandler = async (e: React.FormEvent) => {
     e.preventDefault();
-  
+
     try {
       const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/api/auth/login`, {
         method: "POST",
@@ -63,39 +72,50 @@ const Login: React.FC = () => {
           password,
         }),
       });
-  
+
       const data = await response.json();
       console.log("Full response data:", data);
-  
+
       if (!response.ok) {
         setError(data.message || "Something went wrong!");
         return;
       }
-  
+
       // Save token and userId if they exist
-      if (data.token) {
-        localStorage.setItem("token", data.token);
-      } else {
-        console.error("Token is missing from the response.");
-      }
-  
-      if (data.userId) {
-        localStorage.setItem("userId", data.userId);
-      } else {
-        console.error("userId is missing from the response.");
-      }
-  
-      // Dispatch user details
-      dispatch(setUserDetails(data.userId || ""));
-  
+      // if (data.token) {
+      //   localStorage.setItem("token", data.token);
+      // } else {
+      //   console.error("Token is missing from the response.");
+      // }
+
+      // if (data.userId) {
+      //   localStorage.setItem("userId", data.userId);
+      // } else {
+      //   console.error("userId is missing from the response.");
+      // }
+
+      console.log("data--------->", data)
+
+      
+      dispatch(setUserDetails({
+        userId: data.userId || null,
+        admin: data.admin || false,
+        username: null, // Default for optional fields
+        email: null,
+        level: null,
+        stripeSessionId: null,
+        token: null,
+      }));
+   
+
+
       navigate("/");
     } catch (error) {
       setError("An error occurred. Please try again.");
       console.error("Error during login:", error);
     }
   };
-  
-  
+
 
   return (
     <div className=" flex items-center justify-center h-[90%] bg-gray-100">
@@ -168,9 +188,9 @@ const Login: React.FC = () => {
               onError={() => {
                 console.error("Login Failed");
               }}
-              theme="outline" 
+              theme="outline"
               size="large"
-              width= "400"
+              width="400"
             />
           </div>
         </div>

@@ -28,7 +28,7 @@ exports.loginUser = async (req, res) => {
     if (!isMatch) return res.status(401).json({ message: "Invalid credentials" });
 
     const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, { expiresIn: "1h" });
-    res.json({ token, userId: user._id });
+    res.json({ token, userId: user._id, admin: user.isAdmin });
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
@@ -44,6 +44,25 @@ exports.getUserData = async (req, res) => {
       return res.status(404).send({ message: 'User not found' });
     }
     res.status(200).send(user);
+  } catch (error) {
+    console.error('Error fetching user data:', error);
+    res.status(500).send({ message: 'Error fetching user data' });
+  }
+};
+
+
+exports.getAllUsersData = async (req, res) => {
+  try {
+    
+    const users = await User.find(); 
+
+    if (!users || users.length === 0) {
+      return res.status(404).send({ message: 'No users found' });
+    }
+
+    res.status(200).send(users);
+
+    
   } catch (error) {
     console.error('Error fetching user data:', error);
     res.status(500).send({ message: 'Error fetching user data' });
