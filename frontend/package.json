@@ -9,6 +9,10 @@
     "packages/*"
   ],
   "dependencies": {
+    "@cometchat/chat-sdk-javascript": "^4.0.10",
+    "@cometchat/chat-uikit-react": "^4.3.24",
+    "@cometchat/uikit-elements": "^4.3.18",
+    "@cometchat/uikit-shared": "^4.3.21",
     "@react-oauth/google": "^0.12.1",
     "@reduxjs/toolkit": "^2.4.0",
     "@types/react-dom": "^18.3.2",
@@ -16,6 +20,7 @@
     "daisyui": "^4.12.14",
     "google-auth-library": "^9.15.0",
     "jwt-decode": "^4.0.0",
+    "postcss": "^8.4.49",
     "rc-resize-observer": "^1.4.0",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",

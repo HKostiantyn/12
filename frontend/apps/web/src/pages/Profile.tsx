@@ -1,19 +1,24 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
-
+import { useSelector } from "react-redux";
+import { RootState } from "../store";
 // Core Components
 import ImageUpload from "../components/ImageUpload";
 import MembershipPlans from "./Membershipplans";
 import AccountInfo from "./AccountInfo";
+import { CometChat } from "@cometchat/chat-sdk-javascript";
+import { AppConstants } from "../AppConstants";
 // import userMenuIcon from "/user-menu-icon.png";
 
 interface AccountProps {}
 
 const Profile: React.FC<AccountProps> = () => {
+  
   const [currentTab, setCurrentTab] = useState<number>(1);
   const [toastOpen, setToastOpen] = useState<boolean>(false);
   const [notificationText, setNotificationText] = useState<string>("");
   const [notifyType, setNotifyType] = useState<"success" | "error">("success");
+  const userId = useSelector((state: RootState) => state.auth.userId);
 
   const navigate = useNavigate();
   const location = useLocation();
@@ -99,36 +104,45 @@ const Profile: React.FC<AccountProps> = () => {
     setNotifyType("success");
   };
 
-  const handleUploadLogo = async (file: File | null) => {
-    if (!file) return;
-
+  const handleUploadLogo = async (imagePreviewUrl: string | null) => {
+    if (!imagePreviewUrl) return;
+  
+    console.log("imagePreviewUrl", imagePreviewUrl);
+  
     try {
-      const formData = new FormData();
-      formData.append("file", file);
-
-      const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/api/users/upload_logo`, {
+      const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/api/auth/${userId}/avatar`, {
         method: "POST",
-        body: formData,
+        headers: {
+          "Content-Type": "application/json", // Indicate that the request body is JSON
+        },
+        body: JSON.stringify({ imagePreviewUrl }), // Send imagePreviewUrl as part of a JSON object
       });
-
+  
       if (!response.ok) {
         throw new Error("Failed to upload logo");
       }
-
+  
       const resData = await response.json();
-
-      if (resData.path.trim() !== "") {
+  
+      if (resData.user && resData.user.avatar) {
         setToastOpen(true);
         setNotificationText("Successfully uploaded your logo.");
         setNotifyType("success");
       }
+
+      const cometAuthKey = AppConstants.AUTH_KEY; // Your CometChat Auth Key
+
+      const cometAvatar =`${import.meta.env.VITE_BACKEND_URL}${imagePreviewUrl}`;
+      const existingUser = await CometChat.getUser(userId);
+      existingUser.setAvatar(cometAvatar);
+      await CometChat.updateUser(existingUser, cometAuthKey); // Update user with new avatar
     } catch (error) {
       console.error("Error uploading logo:", error);
       setToastOpen(true);
       setNotificationText("Failed to upload your logo. Please try again.");
       setNotifyType("error");
     }
-  };
+  };  
 
   const handleClose = () => {
     setToastOpen(false);

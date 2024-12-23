@@ -1,4 +1,5 @@
-  interface AccountInfoProps {
+ import React from "react";
+ interface AccountInfoProps {
     handleUpdateAccountInfo: (userData: any) => void;
   }
   

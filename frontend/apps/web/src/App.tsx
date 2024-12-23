@@ -1,4 +1,4 @@
-import React from "react";
+import React, {useState} from "react";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import Dashboard from "./pages/Dashboard";
 import Header from "./components/Header";
@@ -12,7 +12,7 @@ import Financial from "./pages/Financial";
 import News from "./pages/News";
 import Announcement from "./pages/Announcement";
 import Ideas from "./pages/Ideas";
-import Comments from "./pages/Comments";
+import Comments  from "./pages/Comments";
 import Signup from "./pages/Signup";
 import Login from "./pages/Login";
 import Profile from "./pages/Profile";
@@ -20,8 +20,43 @@ import Success from "./pages/success";
 import PrivateRoute from "./routes/PrivateRoute";
 import AdminRoute from "./routes/AdminRoute";
 import AdminDashboard from "./pages/admin/Dashboard";
+import { Effects } from "./components/effects";
+import { ConversationsWithMessagesWrapper } from "./components/ConversationsWithMessagesWrapper";
+import { ContactsWrapper } from "./components/ContactsWrapper";
+import {
+  CometChatConversations,
+  CometChatGroups,
+  CometChatGroupsWithMessages,
+  CometChatThemeContext,
+  CometChatUsers,
+  CometChatUsersWithMessages,
+} from "@cometchat/chat-uikit-react";
+
 
 const App: React.FC = () => {
+  const [loggedInUser, setLoggedInUser] = useState<
+  CometChat.User | null | undefined
+>();
+
+  const [isMobileView, setIsMobileView] = useState(false);
+
+  function getConversationsWithMessages() {
+    return <ConversationsWithMessagesWrapper isMobileView={isMobileView} />;
+  }
+
+  function getConversations() {
+    return <CometChatConversations />;
+  }
+
+  function getContacts() {
+    return <ContactsWrapper />;
+  }
+
+  Effects({
+    setLoggedInUser,
+    setIsMobileView,
+  });
+
   return (
     <BrowserRouter>
       <div className="h-screen overflow-scroll" style={{ scrollbarWidth: "none" }}>
@@ -37,12 +72,13 @@ const App: React.FC = () => {
           <Route path="/financial" element={<Financial />} />
           <Route path="/news" element={<News />} />
           <Route path="/announcements" element={<Announcement />} />
-          <Route path="/comments" element={<Comments />} />
-          <Route path="/ideas" element={<Ideas />} />
+          <Route path="/ideas" element={getConversations()} />
+          {/* <Route path="/ideas" element={getContacts()} /> */}
           <Route path="/login" element={<Login />} />
           <Route path="/signup" element={<Signup />} />
           <Route path="/success" element={<Success />} />
-
+          <Route path="/comments" element={getConversationsWithMessages()} />
+      
           {/* Private Routes */}
           <Route element={<PrivateRoute />}>
             <Route path="/profile" element={<Profile />} />

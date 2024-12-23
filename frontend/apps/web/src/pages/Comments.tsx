@@ -1,3 +1,5 @@
+import React from "react";
+
 const Comments = () => {
   return <h1 className="text-2xl">Comments Page</h1>;
 };

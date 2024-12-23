@@ -1,9 +1,11 @@
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom"; // useNavigate is used in v6
 import { GoogleLogin } from "@react-oauth/google";
-import { useDispatch, useSelector } from 'react-redux';
-import { setUserDetails } from '../store/authSlice';
+import { useDispatch, useSelector } from "react-redux";
+import { setUserDetails } from "../store/authSlice";
+import { CometChat } from "@cometchat/chat-sdk-javascript";
 import { RootState } from "../store";
+import { AppConstants } from "../AppConstants";
 
 const Login: React.FC = () => {
   const dispatch = useDispatch();
@@ -16,44 +18,70 @@ const Login: React.FC = () => {
     const token = credentialResponse.credential;
 
     // Send the token to the backend
-    const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/api/auth/google-login`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ token }),
-    });
+    const response = await fetch(
+      `${import.meta.env.VITE_BACKEND_URL}/api/auth/google-login`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ token }),
+      }
+    );
 
-    const data = await response.json();
+    const userData = await response.json();
     if (response.ok) {
+      dispatch(
+        setUserDetails({
+          userId: userData.userId || null,
+          admin: userData.admin || false,
+          username: userData.username || null,
+          email: userData.email || null,
+          level: userData.level || null,
+          stripeSessionId: userData.stripeSessionId || null,
+          token: userData.token || null,
+          avatar: userData.avatar || null,
+        })
+      );
 
-      // Save token and userId if they exist
-      //  if (data.token) {
-      //   localStorage.setItem("token", data.token);
-      // } else {
-      //   console.error("Token is missing from the response.");
-      // }
 
-      // if (data.userId) {
-      //   localStorage.setItem("userId", data.userId);
-      // } else {
-      //   console.error("userId is missing from the response.");
-      // }
+      const cometUserId = userData.userId; // Use unique user ID
+      const cometAuthKey = AppConstants.AUTH_KEY; // Your CometChat Auth Key
 
-      dispatch(setUserDetails({
-        userId: data.userId || null,
-        admin: data.admin || false,
-        username: null, // Default for optional fields
-        email: null,
-        level: null,
-        stripeSessionId: null,
-        token: null,
-      }));
-   
+      // Construct the avatar URL only if avatar exists
+      const cometAvatar =`${import.meta.env.VITE_BACKEND_URL}${userData.avatar}`;
+
+      // Check if user exists in CometChat
+      try {
+        const existingUser = await CometChat.getUser(cometUserId);
+        console.log("User already exists in CometChat:", existingUser);
+
+        // // Check if avatar is missing and update if necessary
+        // if (!existingUser.getAvatar() && cometAvatar) {
+        //   console.log("Avatar is missing, updating...");
+        //   existingUser.setAvatar(cometAvatar);
+        //   await CometChat.updateUser(existingUser, cometAuthKey); // Update user with new avatar
+        //   console.log("User avatar updated in CometChat.");
+        // }
+      } catch (error) {
+        console.log("User does not exist in CometChat, creating user...");
+        const newUser = new CometChat.User(cometUserId);
+        newUser.setName(userData.username || "New User");
+        newUser.setAvatar(cometAvatar || ""); // Set avatar if available
+
+        await CometChat.createUser(newUser, cometAuthKey);
+        console.log("User created in CometChat.");
+      }
+
+      // Login the user into CometChat
+      const cometLogin = await CometChat.login(cometUserId, cometAuthKey);
+      console.log("CometChat login successful:", cometLogin);
+
+      
 
       navigate("/"); // Redirect using navigate
     } else {
-      console.error("Google login failed", data.error);
+      console.error("Google login failed", userData.error);
     }
   };
 
@@ -62,60 +90,88 @@ const Login: React.FC = () => {
     e.preventDefault();
 
     try {
-      const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/api/auth/login`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          email,
-          password,
-        }),
-      });
+      // Authenticate user with your backend
+      const response = await fetch(
+        `${import.meta.env.VITE_BACKEND_URL}/api/auth/login`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            email,
+            password,
+          }),
+        }
+      );
 
-      const data = await response.json();
-      console.log("Full response data:", data);
+      const userData = await response.json();
+      console.log("Full response data:", userData);
 
       if (!response.ok) {
-        setError(data.message || "Something went wrong!");
+        setError(userData.message || "Something went wrong!");
         return;
       }
 
-      // Save token and userId if they exist
-      // if (data.token) {
-      //   localStorage.setItem("token", data.token);
-      // } else {
-      //   console.error("Token is missing from the response.");
-      // }
+      console.log("User ID from backend:", userData.userId);
 
-      // if (data.userId) {
-      //   localStorage.setItem("userId", data.userId);
-      // } else {
-      //   console.error("userId is missing from the response.");
-      // }
+      if (!userData.userId) {
+        throw new Error("User ID is missing from the response.");
+      }
 
-      console.log("data--------->", data)
+      // Save user details in your Redux store or state management
+      dispatch(
+        setUserDetails({
+          userId: userData.userId || null,
+          admin: userData.admin || false,
+          username: userData.username || null,
+          email: userData.email || null,
+          level: userData.level || null,
+          stripeSessionId: userData.stripeSessionId || null,
+          token: userData.token || null,
+          avatar: userData.avatar || null,
+        })
+      );
 
-      
-      dispatch(setUserDetails({
-        userId: data.userId || null,
-        admin: data.admin || false,
-        username: null, // Default for optional fields
-        email: null,
-        level: null,
-        stripeSessionId: null,
-        token: null,
-      }));
-   
+      const cometUserId = userData.userId; // Use unique user ID
+      const cometAuthKey = AppConstants.AUTH_KEY; // Your CometChat Auth Key
 
+      // Construct the avatar URL only if avatar exists
+      const cometAvatar =`${import.meta.env.VITE_BACKEND_URL}${userData.avatar}`;
 
+      // Check if user exists in CometChat
+      try {
+        const existingUser = await CometChat.getUser(cometUserId);
+        console.log("User already exists in CometChat:", existingUser);
+
+        // // Check if avatar is missing and update if necessary
+        // if (!existingUser.getAvatar() && cometAvatar) {
+        //   console.log("Avatar is missing, updating...");
+        //   existingUser.setAvatar(cometAvatar);
+        //   await CometChat.updateUser(existingUser, cometAuthKey); // Update user with new avatar
+        //   console.log("User avatar updated in CometChat.");
+        // }
+      } catch (error) {
+        console.log("User does not exist in CometChat, creating user...");
+        const newUser = new CometChat.User(cometUserId);
+        newUser.setName(userData.username || "New User");
+        newUser.setAvatar(cometAvatar || ""); // Set avatar if available
+
+        await CometChat.createUser(newUser, cometAuthKey);
+        console.log("User created in CometChat.");
+      }
+
+      // Login the user into CometChat
+      const cometLogin = await CometChat.login(cometUserId, cometAuthKey);
+      console.log("CometChat login successful:", cometLogin);
+
+      // Navigate to the home page
       navigate("/");
     } catch (error) {
       setError("An error occurred. Please try again.");
       console.error("Error during login:", error);
     }
   };
-
 
   return (
     <div className=" flex items-center justify-center h-[90%] bg-gray-100">
@@ -125,9 +181,8 @@ const Login: React.FC = () => {
           <h1 className="text-2xl font-semibold mb-4 text-center md:text-left">
             Sign In
           </h1>
-
-          {error && <p className="text-red-500">{error}</p>} {/* Show error message */}
-
+          {error && <p className="text-red-500">{error}</p>}{" "}
+          {/* Show error message */}
           <form onSubmit={submitHandler} className="w-full">
             <div className="my-4">
               <label
@@ -170,14 +225,10 @@ const Login: React.FC = () => {
               Login
             </button>
           </form>
-
           <div className="mt-4 text-center">
             <p className="text-black text-lg">
               New Customer?{" "}
-              <Link
-                to="/signup"
-                className="text-blue-500 hover:underline"
-              >
+              <Link to="/signup" className="text-blue-500 hover:underline">
                 Register
               </Link>
             </p>
@@ -205,7 +256,6 @@ const Login: React.FC = () => {
         </div>
       </section>
     </div>
-
   );
 };
 

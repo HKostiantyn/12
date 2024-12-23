@@ -10,6 +10,7 @@ interface UserState {
   level: string | null;
   stripeSessionId: string | null;
   admin: boolean;
+  avatar: string | null;
 }
 
 // Utility to safely parse localStorage items
@@ -30,6 +31,7 @@ const initialState: UserState = {
   level: safeParse('level'),
   stripeSessionId: safeParse('stripeSessionId'),
   admin: localStorage.getItem('admin') === 'true',
+  avatar: safeParse('avatar'),
 };
 
 export const authSlice = createSlice({
@@ -38,7 +40,7 @@ export const authSlice = createSlice({
   reducers: {
     // Action to set user details and save them in localStorage
     setUserDetails: (state, action: PayloadAction<UserState>) => {
-      const { userId, username, email, level, stripeSessionId, token, admin } = action.payload;
+      const { userId, username, email, level, stripeSessionId, token, admin, avatar } = action.payload;
 
       state.userId = userId;
       state.username = username;
@@ -47,6 +49,7 @@ export const authSlice = createSlice({
       state.stripeSessionId = stripeSessionId;
       state.token = token;
       state.admin = admin;
+      state.avatar = avatar;
 
       // Save to localStorage
       if (userId) localStorage.setItem('userId', userId);
@@ -69,6 +72,7 @@ export const authSlice = createSlice({
       state.stripeSessionId = null;
       state.token = null;
       state.admin = false;
+      state.avatar = null;
 
       // Clear specific keys
       localStorage.removeItem('userId');
@@ -90,6 +94,7 @@ export const selectEmail = (state: RootState): string | null => state.auth.email
 export const selectLevel = (state: RootState): string | null => state.auth.level;
 export const selectStripeSessionId = (state: RootState): string | null => state.auth.stripeSessionId;
 export const selectIsAdmin = (state: RootState): boolean => state.auth.admin;
+export const selectAvatar = (state: RootState): string | null => state.auth.avatar;
 
 // Actions
 export const { setUserDetails, clearUserDetails } = authSlice.actions;

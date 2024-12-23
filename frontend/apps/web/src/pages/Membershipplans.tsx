@@ -63,8 +63,9 @@ const MembershipPlans = ({ subscriptionPlans }: MembershipPlansProps) => {
           level: userData.level || null,
           stripeSessionId: userData.stripeSessionId || null,
           token: userData.token || null,
+          avatar: userData.avatar || null,
         }));
-        console.log(userData)
+       
       } catch (error) {
         console.error('Error fetching user data:', error);
       }

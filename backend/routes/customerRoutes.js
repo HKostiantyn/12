@@ -1,12 +1,12 @@
-const express = require('express');
-const router = express.Router();
+import express from 'express';
+import { createSubscriptionCheckoutSession, cancelSubscription, createCustomer, handlePaymentSuccess } from "../controllers/customerController.js";
 
-const { createSubscriptionCheckoutSession,cancelSubscription,createCustomer ,handlePaymentSuccess} = require("../controllers/customerController");
+const router = express.Router();
 
 // POST route for creating a customer
 router.post('/create-customer', createCustomer);
 router.post("/create-subscription-checkout-session", createSubscriptionCheckoutSession);
-router.post("/payment-success",handlePaymentSuccess );
+router.post("/payment-success", handlePaymentSuccess);
 router.post("/cancelSubscription", cancelSubscription);
 
-module.exports = router;
+export default router;

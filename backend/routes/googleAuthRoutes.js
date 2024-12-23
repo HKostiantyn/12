@@ -1,7 +1,7 @@
-const express = require("express");
-const { OAuth2Client } = require("google-auth-library");
-const jwt = require("jsonwebtoken");
-const User = require("../models/userModel");
+import express from "express";
+import { OAuth2Client } from "google-auth-library";
+import jwt from "jsonwebtoken";
+import User from '../models/userModel.js';
 
 const router = express.Router();
 
@@ -41,4 +41,5 @@ router.post("/google-login", async (req, res) => {
     }
 });
 
-module.exports = router;
+
+export default router; 
